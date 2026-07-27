@@ -27,10 +27,8 @@ motor_names = list(motors.keys())
 
 # Create motor bus
 port = "/dev/ttyACM0"  # Linux
-# port = "COM3"  # Windows
-# port = "/dev/cu.usbserial-*"  # macOS
 
-calibration_path = "/home/brouhane/.cache/huggingface/lerobot/calibration/teleoperators/so_leader/my_follower.json"
+calibration_path = "/home/hope/.cache/huggingface/lerobot/calibration/robots/so_follower/my_arm.json"
 
 with open(calibration_path, "r") as f:
     calib_data = json.load(f)
@@ -49,7 +47,7 @@ for name, data in calib_data.items():
 motor_bus = FeetechMotorsBus(
     port=port,
     motors=motors,
-    protocol_version=0,  # Use 0 or 1 depending on your motors
+    protocol_version=0,
     calibration=calibration,
 )
 
@@ -75,9 +73,6 @@ print(f"Connected from {addr}")
 
 buffer = ""
 
-
-buffer = ""
-
 try:
     while True:
         data = conn.recv(1024)
@@ -93,10 +88,6 @@ try:
 
             try:
                 positions = json.loads(line)
-
-                # DEBUG (optionnel)
-                # print("Received:", positions)
-
                 motor_bus.sync_write("Goal_Position", positions)
 
             except json.JSONDecodeError:
